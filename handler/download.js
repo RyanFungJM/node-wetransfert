@@ -9,7 +9,7 @@ const fs                = require('fs')
 const stream            = require('stream')
 const util              = require('util')
 const utils             = require('../utils/utils')
-
+const Progress          = require('node-fetch-progress')
 const streamPipeline    = util.promisify(stream.pipeline)
 
 exports.download = function (url = '', destPath = null, fileIds = null) {
@@ -84,6 +84,14 @@ exports.downloadPipe = async function (url = '', fileIds = null, progressCallbac
     const size = weTransfertObject.content.size
     const response = await fetch(weTransfertObject.downloadURI, {
         agent: utils.getHttpAgent()
+    })
+    const progress = new Progress(response, { throttle: 100 })
+    progress.on('progress', (p) => {
+        process.stdout.write(
+        `${Math.floor(p.progress * 100)}% - ${p.doneh}/${p.totalh} - ${
+            p.rateh
+        } - ${p.etah}                       \r`
+        )
     })
     if (!response.ok) {
         throw new Error(`Unexpected response ${response.status} ${response.statusText}`)
