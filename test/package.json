@@ -9,6 +9,6 @@
   },
   "author": "orgrimarr",
   "dependencies": {
-    "wetransfert": "^2.1.0"
+    "wetransfert": "git+https://github.com/RyanFungJM/node-wetransfert.git"
   }
 }
