@@ -118,8 +118,23 @@ const testUploadLink = function(){
 // testUploadLink()
 // testUpload().then(console.log).catch(console.error)
 
-getInfo("https://wetransfer.com/downloads/068f46823c14ad9c3b5ef39d0f01f90120210504211103/7924157e91f9eff675d18ac63fcc23b820210504211117/ecbda7")
+
+// getInfo("https://wetransfer.com/downloads/0e6e055b442d5622f1ee18fbd5a085f620210901121828/74316c4e7a717f39399fc5b3ffb24bbb20210901121901/eb37d8")
+// .then(response =>  {
+//     console.log(JSON.stringify(response, null, 2))
+// })
+// .catch(console.error)
+
+
+getInfo("https://wetransfer.com/downloads/0e6e055b442d5622f1ee18fbd5a085f620210901121828/74316c4e7a717f39399fc5b3ffb24bbb20210901121901/eb37d8")
 .then(response =>  {
-    console.log(JSON.stringify(response, null, 2))
+    var result = JSON.stringify(response, null, 2)
+    console.log("downloadURI: ", response.downloadURI)
+    console.log("recommended_filename: ", response.content.recommended_filename)
+    downloadPipe(downloadURL, null, (percent) => { 
+        console.log('DownloadPipe callback: ', percent) 
+    }).then(downloadStream => {
+        downloadStream.pipe(fs.createWriteStream(path.resolve(downloadFolder, response.content.recommended_filename)))
+    }).catch(console.error)
 })
-.catch(console.error)    
+.catch(console.error)  
