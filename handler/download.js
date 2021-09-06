@@ -62,6 +62,53 @@ exports.download = function (url = '', destPath = null, fileIds = null) {
     })
 }
 
+exports.downloadUnzip = function (url = '', destPath = null, fileIds = null) {
+    return new PProgress(async (resolve, reject, progress) => {
+        if (!destPath) {
+            return reject(new Error('Not destination path found'))
+        }
+        try {
+            const weTransfertObject = await getInfo(url, fileIds)
+            if (!weTransfertObject) {
+                return reject(new Error('Not a valid url'))
+            }
+            if (!weTransfertObject.downloadURI) {
+                const errorMessage = weTransfertObject.content ? weTransfertObject.content.message : ""
+                return reject(new Error(`No downloadURI found. ${errorMessage}`))
+            }
+
+            if (!fs.existsSync(destPath)) {
+                await mkdirp(destPath)
+            }
+
+            const destinationStream = fs.createWriteStream(path.join(destPath, weTransfertObject.content.recommended_filename))
+
+            const response = await fetch(weTransfertObject.downloadURI, {
+                agent: utils.getHttpAgent()
+            })
+            if (!response.ok) {
+                throw new Error(`Unexpected response ${response.status} ${response.statusText}`)
+            }
+            debug('get total size', parseInt(response.headers.get('content-length')), weTransfertObject.content.size)
+            const size = parseInt(response.headers.get('content-length')) || weTransfertObject.content.size
+
+            let uploadedByte = 0
+            const progressStream = new stream.PassThrough()
+            progressStream.on('data', chunk => {
+                uploadedByte += chunk.length
+                const percent = uploadedByte / size
+                progress(percent.toFixed(2))
+            })
+
+            await streamPipeline(response.body, progressStream, destinationStream)
+
+            return resolve(weTransfertObject)
+        }
+        catch (e) {
+            return reject(e)
+        }
+    })
+}
 
 /* API
     downloadPipe('http://wetransfertURI)
@@ -87,7 +134,8 @@ exports.downloadPipe = async function (url = '', fileIds = null, progressCallbac
     })
     const progress = new Progress(response, { throttle: 100 })
     progress.on('progress', (p) => {
-        process.stdout.write(
+        // process.stdout.write(
+        console.log(
         `${Math.floor(p.progress * 100)}% - ${p.doneh}/${p.totalh} - ${
             p.rateh
         } - ${p.etah}                       \r`
