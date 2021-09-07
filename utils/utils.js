@@ -10,9 +10,9 @@ const apiVersion = "v4"
 debug("wetransfer API version: " + apiVersion)
 exports.apiVersion = apiVersion
 
-const weTransfertRegex         = /(https:\/\/wetransfer\.com\/downloads\/[0-9a-zA-Z]{10,}\/[0-9a-zA-Z]{10,}\/[0-9a-zA-Z]{4,})/i
+const weTransfertRegex         = /(https:\/\/[0-9a-zA-Z]*\.?wetransfer\.com\/downloads\/[0-9a-zA-Z]{10,}\/[0-9a-zA-Z]{10,}\/[0-9a-zA-Z]{4,})/i
 const weTransfertRegexShort    = /(https:\/\/we\.tl\/.{5,})/i
-const weTransfertRegexMedium   = /(https:\/\/wetransfer\.com\/downloads\/[0-9a-zA-Z]{10,}\/[0-9a-zA-Z]{4,})/i
+const weTransfertRegexMedium   = /(https:\/\/[0-9a-zA-Z]*\.?wetransfer\.com\/downloads\/[0-9a-zA-Z]{10,}\/[0-9a-zA-Z]{4,})/i
 
 const getHttpAgent = function(){
     const proxy = process.env.http_proxy || process.env.HTTP_PROXY || process.env.https_proxy || process.env.HTTPS_PROXY
