@@ -4,8 +4,6 @@
  [![Known Vulnerabilities](https://snyk.io/test/github/orgrimarr/node-wetransfert/badge.svg)](https://snyk.io/test/github/orgrimarr/node-wetransfert) 
 
 # Changelog
-- 2.3.4
-  - Add downloadPIPE Progress
 - 2.3.3
   - Fix download for Nomal url (Fix get recipient id)
 - 2.3.2
