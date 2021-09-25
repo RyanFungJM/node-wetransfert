@@ -62,7 +62,7 @@ exports.download = function (url = '', destPath = null, fileIds = null) {
     })
 }
 
-exports.downloadUnzip = function (url = '', destPath = null, fileIds = null) {
+exports.downloadZip = function (url = '', destPath = null, fileIds = null) {
     return new PProgress(async (resolve, reject, progress) => {
         if (!destPath) {
             return reject(new Error('Not destination path found'))
